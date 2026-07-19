@@ -26,30 +26,31 @@
       <h1 style="font-size: 36px; margin-bottom: 12px;">Support Desk</h1>
       <p class="lead" style="margin-bottom: 32px;">Need help, found a bug, or want to suggest an ambient soundscape? We would love to hear from you.</p>
       
-      <form action="mailto:admin@learnhubplay.nl" method="post" enctype="text/plain" style="display: flex; flex-direction: column; gap: 16px;">
+      <form id="support-form" style="display: flex; flex-direction: column; gap: 16px;">
         <div style="display: flex; flex-direction: column; gap: 6px;">
           <label style="font-size: 13px; font-weight: 700; color: var(--muted);">Your Name</label>
-          <input type="text" name="name" required style="padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; outline: none; background: #fff;" />
+          <input type="text" id="form-name" required style="padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; outline: none; background: #fff;" />
         </div>
         
         <div style="display: flex; flex-direction: column; gap: 6px;">
           <label style="font-size: 13px; font-weight: 700; color: var(--muted);">Your Email Address</label>
-          <input type="email" name="email" required style="padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; outline: none; background: #fff;" />
+          <input type="email" id="form-email" required style="padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; outline: none; background: #fff;" />
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 6px;">
           <label style="font-size: 13px; font-weight: 700; color: var(--muted);">Subject</label>
-          <input type="text" name="subject" required style="padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; outline: none; background: #fff;" />
+          <input type="text" id="form-subject" required style="padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; outline: none; background: #fff;" />
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 6px;">
           <label style="font-size: 13px; font-weight: 700; color: var(--muted);">Message Details</label>
-          <textarea name="message" rows="5" required style="padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; resize: vertical; background: #fff;"></textarea>
+          <textarea id="form-message" rows="5" required style="padding: 12px; border: 1px solid var(--line); border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; resize: vertical; background: #fff;"></textarea>
         </div>
 
-        <button type="submit" class="button primary" style="cursor: pointer; text-align: center; border: none;">
+        <button type="submit" id="form-submit-btn" class="button primary" style="cursor: pointer; text-align: center; border: none;">
           Send Support Inquiry
         </button>
+        <div id="form-status" style="margin-top: 10px; text-align: center; font-weight: bold; font-size: 14px;"></div>
       </form>
 
       <div style="margin-top: 32px; border-top: 1px solid var(--line); paddingTop: 24px; text-align: center;">
@@ -67,5 +68,47 @@
         <a href="support.html">Support</a>
       </div>
     </footer>
+    <script>
+      document.getElementById('support-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('form-name').value;
+        const email = document.getElementById('form-email').value;
+        const subject = document.getElementById('form-subject').value;
+        const message = document.getElementById('form-message').value;
+
+        const btn = document.getElementById('form-submit-btn');
+        const status = document.getElementById('form-status');
+
+        btn.disabled = true;
+        btn.style.opacity = '0.7';
+        btn.textContent = 'Sending Message...';
+        status.textContent = '';
+
+        try {
+          const res = await fetch('/api/support', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, email, subject, message })
+          });
+          const data = await res.json();
+          if (res.ok && data.success) {
+            status.style.color = '#10b981';
+            status.textContent = 'Your message has been sent successfully!';
+            document.getElementById('support-form').reset();
+          } else {
+            status.style.color = '#ef4444';
+            status.textContent = data.error || 'Failed to send your message. Please try again.';
+          }
+        } catch (err) {
+          console.error(err);
+          status.style.color = '#ef4444';
+          status.textContent = 'An error occurred. Please contact admin@learnhubplay.nl directly.';
+        } finally {
+          btn.disabled = false;
+          btn.style.opacity = '1';
+          btn.textContent = 'Send Support Inquiry';
+        }
+      });
+    </script>
   </body>
 </html>
