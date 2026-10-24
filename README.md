@@ -7,3 +7,7 @@ Static product website and support pages for FocusWall. The repository contains 
 Serve the repository root with a local static server, such as `python3 -m http.server 8000`, then open `http://localhost:8000`. The checked-in `package.json` provides `npm test` for the website checks.
 
 Review `privacy.html`, `support.html`, and `pricing.html` together whenever product behavior or plans change. Keep private credentials and production endpoints out of tracked files.
+
+## License
+
+Original website code and assets are licensed under the [PolyForm Noncommercial License 1.0.0](LICENSE). Third-party materials remain under their respective licenses.
