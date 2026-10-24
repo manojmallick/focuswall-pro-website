@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "scripts": {
+    "test": "npx vitest run"
+  },
   "dependencies": {
     "nodemailer": "^9.0.3"
   }
